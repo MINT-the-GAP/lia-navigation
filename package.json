@@ -1,0 +1,19 @@
+{
+  "name": "lia-navigation",
+  "version": "0.0.1",
+  "description": "Enhanced collapsible navigation with bookmarks and hierarchical TOC for LiaScript",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "parcel build src/index.ts --dist-dir dist --no-scope-hoist"
+  },    
+  "keywords": [
+    "liascript",
+    "navigation",
+    "toc",
+    "bookmarks"
+  ],
+  "devDependencies": {
+    "parcel": "^2.12.0",
+    "typescript": "^5.4.5"
+  }
+}
