@@ -16,8 +16,13 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
   min-height:0 !important;
 }
 .lia-toc.lia-bm-toc5-active #lia-bm-toc5{
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:100% !important;
+}
+.lia-toc.lia-bm-toc5-active #lia-bm-toc5{
   overflow: auto !important;
 }
 .lia-toc.lia-bm-toc5-active .lia-bm-overview-pin{
@@ -28,7 +33,99 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
 .lia-toc #lia-bm-toc5{ padding:.25em 0 .5em 0; }
 
 .lia-toc #lia-bm-toc5 ul{ list-style:none; margin:0; padding:0; }
-.lia-toc #lia-bm-toc5 .bm-list{ padding:0 .5em; }
+.lia-toc #lia-bm-toc5 .bm-list{
+  padding:0 .5em;
+  flex:1 1 auto;
+  min-height:0;
+}
+
+.lia-toc #lia-bm-toc5 .bm-footer{
+  margin-top:auto;
+  z-index: 1;
+  padding: .55em .5em .6em;
+  border-top: 1px solid rgba(127,127,127,.28);
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,.04) 18%,
+    rgba(255,255,255,.08)
+  );
+  backdrop-filter: blur(6px);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-shell{
+  display:flex;
+  align-items:center;
+  gap:.45em;
+  width:100%;
+  box-sizing:border-box;
+  padding:.45em .6em;
+  border-radius:.65em;
+  border:1px solid rgba(127,127,127,.35);
+  background: rgba(0,0,0,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-icon,
+.lia-toc #lia-bm-toc5 .bm-search-clear{
+  width:1.4em;
+  height:1.4em;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(255,255,255,.72);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-icon svg,
+.lia-toc #lia-bm-toc5 .bm-search-clear svg{
+  width:100%;
+  height:100%;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-clear{
+  border:0;
+  background:transparent;
+  padding:0;
+  margin-left:.1em;
+  cursor:pointer;
+  opacity:.85;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-clear:hover{
+  opacity:1;
+  color: rgb(var(--color-highlight));
+}
+
+.lia-toc #lia-bm-toc5 .bm-search{
+  width: 100%;
+  min-width:0;
+  box-sizing: border-box;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search:focus{
+  outline: none;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search::placeholder{
+  color: rgba(255,255,255,.62);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-shell:focus-within{
+  border-color: rgba(var(--color-highlight), .82);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 1px rgba(var(--color-highlight), .18),
+    0 0 0 3px rgba(var(--color-highlight), .12);
+  background: rgba(0,0,0,.24);
+}
 
 .lia-toc #lia-bm-toc5 .bm-row{
   display:flex; align-items:center; gap:.35em;
@@ -102,6 +199,10 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
 }
 .lia-toc #lia-bm-toc5 .bm-row.bm-active a{ font-weight: 700; }
 
+.lia-toc #lia-bm-toc5 .bm-row.bm-search-hit:not(.bm-active){
+  background: rgba(var(--color-highlight), .12);
+}
+
 /* Level styling */
 .lia-toc #lia-bm-toc5 .bm-row[data-level="1"] a{ font-size:1.25em; font-weight:700; }
 .lia-toc #lia-bm-toc5 .bm-row[data-level="2"] a{ font-size:1.00em; font-weight:700; }
@@ -110,18 +211,18 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
 .lia-toc #lia-bm-toc5 .bm-row[data-level="5"] a{ font-size:.75em; font-weight:700; }
 .lia-toc #lia-bm-toc5 .bm-row[data-level="6"] a{ font-size:.7em;  font-weight:700; }
 
-/* Hide search everywhere in .lia-toc */
-.lia-toc :not(#lia-bm-toc5) input[type="search"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="Suche"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="suche"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="Search"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="search"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="Suche"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="suche"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="Search"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="search"],
-.lia-toc :not(#lia-bm-toc5) form[role="search"],
-.lia-toc :not(#lia-bm-toc5) [role="search"]{
+/* Hide legacy search only outside custom TOC box */
+.lia-toc > :not(#lia-bm-toc5) input[type="search"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="Suche"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="suche"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="Search"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="search"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="Suche"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="suche"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="Search"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="search"],
+.lia-toc > :not(#lia-bm-toc5) form[role="search"],
+.lia-toc > :not(#lia-bm-toc5) [role="search"]{
   display:none !important;
 }
 `.trim();
@@ -418,6 +519,114 @@ function $a016e3f2b62aeabf$export$18de645ac3abdaed(tree, activeHash) {
 
 
 
+function $6282e142bf746237$var$normalizeText(value) {
+    return (value || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+function $6282e142bf746237$var$getDirectChildByClass(parent, className) {
+    for (const child of Array.from(parent.children)){
+        const el = child;
+        if (el.classList && el.classList.contains(className)) return el;
+    }
+    return null;
+}
+function $6282e142bf746237$var$getDirectChildList(parent) {
+    for (const child of Array.from(parent.children)){
+        if (child.tagName === "UL") return child;
+    }
+    return null;
+}
+function $6282e142bf746237$var$restoreCollapseState(list, state) {
+    const lis = Array.from(list.children).filter((el)=>el.tagName === "LI");
+    lis.forEach((li)=>{
+        const row = $6282e142bf746237$var$getDirectChildByClass(li, "bm-row");
+        const childWrap = $6282e142bf746237$var$getDirectChildList(li);
+        if (!row || !childWrap) return;
+        const key = row.dataset.key || "";
+        const initialOpen = row.dataset.initialOpen === "1";
+        const openByState = state[key] === 1;
+        const open = openByState || state[key] !== 0 && state[key] !== 1 && initialOpen;
+        $6282e142bf746237$export$8559c98d157fcda1(row, childWrap, open);
+        const btn = $6282e142bf746237$var$getDirectChildByClass(row, "bm-toggle");
+        if (btn) $6282e142bf746237$export$9a698d10fbdc5726(btn, open);
+        $6282e142bf746237$var$restoreCollapseState(childWrap, state);
+    });
+}
+function $6282e142bf746237$var$applySearchFilter(list, query) {
+    const lis = Array.from(list.children).filter((el)=>el.tagName === "LI");
+    let anyVisible = false;
+    lis.forEach((li)=>{
+        const row = $6282e142bf746237$var$getDirectChildByClass(li, "bm-row");
+        const childWrap = $6282e142bf746237$var$getDirectChildList(li);
+        let selfMatch = false;
+        if (row) {
+            const hay = row.dataset.searchText || $6282e142bf746237$var$normalizeText(row.textContent || "");
+            selfMatch = query.length === 0 ? true : hay.includes(query);
+            row.classList.toggle("bm-search-hit", query.length > 0 && selfMatch);
+        }
+        const childMatch = childWrap ? $6282e142bf746237$var$applySearchFilter(childWrap, query) : false;
+        const visible = query.length === 0 ? true : selfMatch || childMatch;
+        li.style.display = visible ? "" : "none";
+        if (query.length > 0 && row && childWrap && childMatch) {
+            $6282e142bf746237$export$8559c98d157fcda1(row, childWrap, true);
+            const btn = $6282e142bf746237$var$getDirectChildByClass(row, "bm-toggle");
+            if (btn) $6282e142bf746237$export$9a698d10fbdc5726(btn, true);
+        }
+        if (visible) anyVisible = true;
+    });
+    return anyVisible;
+}
+function $6282e142bf746237$export$3dafe445bd076f2a(doc, box, state) {
+    const list = box.querySelector(".bm-list");
+    if (!list) return;
+    const footer = doc.createElement("div");
+    footer.className = "bm-footer";
+    const shell = doc.createElement("label");
+    shell.className = "bm-search-shell";
+    const icon = doc.createElement("span");
+    icon.className = "bm-search-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      <path d="M10 4a6 6 0 104.47 10.03l4.25 4.25 1.41-1.41-4.25-4.25A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" fill="currentColor"></path>
+    </svg>
+  `.trim();
+    const input = doc.createElement("input");
+    input.type = "search";
+    input.className = "bm-search";
+    input.placeholder = "Suche im Inhaltsverzeichnis";
+    input.setAttribute("aria-label", "Suche im Inhaltsverzeichnis");
+    input.autocomplete = "off";
+    const clear = doc.createElement("button");
+    clear.type = "button";
+    clear.className = "bm-search-clear";
+    clear.setAttribute("aria-label", "Suche l\xf6schen");
+    clear.innerHTML = `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      <path d="M6.4 5l-.7.7L10.6 10.6 5.7 15.5l.7.7 4.9-4.9 4.9 4.9.7-.7-4.9-4.9 4.9-4.9-.7-.7-4.9 4.9z" fill="currentColor"></path>
+    </svg>
+  `.trim();
+    const updateClear = ()=>{
+        clear.style.display = input.value ? "inline-flex" : "none";
+    };
+    const apply = ()=>{
+        const query = $6282e142bf746237$var$normalizeText(input.value || "");
+        $6282e142bf746237$var$applySearchFilter(list, query);
+        if (query.length === 0) $6282e142bf746237$var$restoreCollapseState(list, state);
+        updateClear();
+    };
+    input.addEventListener("input", apply, true);
+    clear.addEventListener("click", ()=>{
+        input.value = "";
+        apply();
+        input.focus();
+    });
+    shell.appendChild(icon);
+    shell.appendChild(input);
+    shell.appendChild(clear);
+    footer.appendChild(shell);
+    box.appendChild(footer);
+    updateClear();
+}
 function $6282e142bf746237$export$8559c98d157fcda1(row, childWrap, open) {
     row.classList.toggle("bm-open", !!open);
     if (childWrap) childWrap.classList.toggle("bm-hidden", !open);
@@ -440,6 +649,8 @@ function $6282e142bf746237$export$3fb6f1d56c512c02(doc, toc, nodes, state, activ
         const row = doc.createElement("div");
         row.className = "bm-row";
         row.dataset.level = String(n.level);
+        row.dataset.key = n.key;
+        row.dataset.searchText = $6282e142bf746237$var$normalizeText(n.text);
         const hasKids = n.children && n.children.length;
         if (hasKids) li.classList.add("bm-has-kids");
         let childWrap = null;
@@ -466,6 +677,7 @@ function $6282e142bf746237$export$3fb6f1d56c512c02(doc, toc, nodes, state, activ
             childWrap.className = "bm-children";
         }
         $6282e142bf746237$export$8559c98d157fcda1(row, childWrap, mustOpen);
+        row.dataset.initialOpen = mustOpen ? "1" : "0";
         if (btn) $6282e142bf746237$export$9a698d10fbdc5726(btn, mustOpen);
         if (btn) btn.addEventListener("click", (ev)=>{
             ev.preventDefault();
@@ -607,6 +819,7 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
         const box = TOC_DOC.createElement("div");
         box.id = "lia-bm-toc5";
         box.appendChild((0, $6282e142bf746237$export$3fb6f1d56c512c02)(TOC_DOC, toc, tree, state, activeHash, forceOpen, $3c9e6b683d5c4a4a$export$93c9ca42d9025d6f));
+        (0, $6282e142bf746237$export$3dafe445bd076f2a)(TOC_DOC, box, state);
         if (toolbar && toolbar.parentElement === toc) toolbar.insertAdjacentElement("afterend", box);
         else toc.insertBefore(box, toc.firstChild);
         toc.classList.add("lia-bm-toc5-active");

@@ -8,8 +8,13 @@ export const CSS_TEXT = `
   min-height:0 !important;
 }
 .lia-toc.lia-bm-toc5-active #lia-bm-toc5{
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:100% !important;
+}
+.lia-toc.lia-bm-toc5-active #lia-bm-toc5{
   overflow: auto !important;
 }
 .lia-toc.lia-bm-toc5-active .lia-bm-overview-pin{
@@ -20,7 +25,99 @@ export const CSS_TEXT = `
 .lia-toc #lia-bm-toc5{ padding:.25em 0 .5em 0; }
 
 .lia-toc #lia-bm-toc5 ul{ list-style:none; margin:0; padding:0; }
-.lia-toc #lia-bm-toc5 .bm-list{ padding:0 .5em; }
+.lia-toc #lia-bm-toc5 .bm-list{
+  padding:0 .5em;
+  flex:1 1 auto;
+  min-height:0;
+}
+
+.lia-toc #lia-bm-toc5 .bm-footer{
+  margin-top:auto;
+  z-index: 1;
+  padding: .55em .5em .6em;
+  border-top: 1px solid rgba(127,127,127,.28);
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,.04) 18%,
+    rgba(255,255,255,.08)
+  );
+  backdrop-filter: blur(6px);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-shell{
+  display:flex;
+  align-items:center;
+  gap:.45em;
+  width:100%;
+  box-sizing:border-box;
+  padding:.45em .6em;
+  border-radius:.65em;
+  border:1px solid rgba(127,127,127,.35);
+  background: rgba(0,0,0,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-icon,
+.lia-toc #lia-bm-toc5 .bm-search-clear{
+  width:1.4em;
+  height:1.4em;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(255,255,255,.72);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-icon svg,
+.lia-toc #lia-bm-toc5 .bm-search-clear svg{
+  width:100%;
+  height:100%;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-clear{
+  border:0;
+  background:transparent;
+  padding:0;
+  margin-left:.1em;
+  cursor:pointer;
+  opacity:.85;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-clear:hover{
+  opacity:1;
+  color: rgb(var(--color-highlight));
+}
+
+.lia-toc #lia-bm-toc5 .bm-search{
+  width: 100%;
+  min-width:0;
+  box-sizing: border-box;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search:focus{
+  outline: none;
+}
+
+.lia-toc #lia-bm-toc5 .bm-search::placeholder{
+  color: rgba(255,255,255,.62);
+}
+
+.lia-toc #lia-bm-toc5 .bm-search-shell:focus-within{
+  border-color: rgba(var(--color-highlight), .82);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 1px rgba(var(--color-highlight), .18),
+    0 0 0 3px rgba(var(--color-highlight), .12);
+  background: rgba(0,0,0,.24);
+}
 
 .lia-toc #lia-bm-toc5 .bm-row{
   display:flex; align-items:center; gap:.35em;
@@ -94,6 +191,10 @@ export const CSS_TEXT = `
 }
 .lia-toc #lia-bm-toc5 .bm-row.bm-active a{ font-weight: 700; }
 
+.lia-toc #lia-bm-toc5 .bm-row.bm-search-hit:not(.bm-active){
+  background: rgba(var(--color-highlight), .12);
+}
+
 /* Level styling */
 .lia-toc #lia-bm-toc5 .bm-row[data-level="1"] a{ font-size:1.25em; font-weight:700; }
 .lia-toc #lia-bm-toc5 .bm-row[data-level="2"] a{ font-size:1.00em; font-weight:700; }
@@ -102,18 +203,18 @@ export const CSS_TEXT = `
 .lia-toc #lia-bm-toc5 .bm-row[data-level="5"] a{ font-size:.75em; font-weight:700; }
 .lia-toc #lia-bm-toc5 .bm-row[data-level="6"] a{ font-size:.7em;  font-weight:700; }
 
-/* Hide search everywhere in .lia-toc */
-.lia-toc :not(#lia-bm-toc5) input[type="search"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="Suche"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="suche"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="Search"],
-.lia-toc :not(#lia-bm-toc5) input[placeholder*="search"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="Suche"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="suche"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="Search"],
-.lia-toc :not(#lia-bm-toc5) input[aria-label*="search"],
-.lia-toc :not(#lia-bm-toc5) form[role="search"],
-.lia-toc :not(#lia-bm-toc5) [role="search"]{
+/* Hide legacy search only outside custom TOC box */
+.lia-toc > :not(#lia-bm-toc5) input[type="search"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="Suche"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="suche"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="Search"],
+.lia-toc > :not(#lia-bm-toc5) input[placeholder*="search"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="Suche"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="suche"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="Search"],
+.lia-toc > :not(#lia-bm-toc5) input[aria-label*="search"],
+.lia-toc > :not(#lia-bm-toc5) form[role="search"],
+.lia-toc > :not(#lia-bm-toc5) [role="search"]{
   display:none !important;
 }
 `.trim();
