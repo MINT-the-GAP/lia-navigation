@@ -135,15 +135,12 @@ export function killSearchAnywhere(toc: HTMLElement): void {
 export function findOverviewControl(toc: HTMLElement): HTMLElement | null {
   if (!toc) return null;
 
+  const homeButton = toc.querySelector<HTMLElement>("#lia-btn-home");
+  if (homeButton && !homeButton.closest("#lia-bm-toc5")) return homeButton;
+
   const cand = Array.from(toc.querySelectorAll<HTMLElement>("a,button")).filter(
     (el) => !el.closest("#lia-bm-toc5")
   );
-
-  for (const el of cand) {
-    const t = (el.textContent || "").trim().toLowerCase();
-    if (t === "übersicht" || t === "uebersicht" || t === "overview")
-      return el;
-  }
 
   for (const el of cand) {
     if (!el.getAttribute) continue;
@@ -159,7 +156,56 @@ export function findOverviewControl(toc: HTMLElement): HTMLElement | null {
     }
   }
 
+  for (const el of cand) {
+    const href = (el.getAttribute("href") || "").trim();
+    if (el.tagName === "A" && href.includes("#")) continue;
+
+    const t = (el.textContent || "").trim().toLowerCase();
+    if (t === "übersicht" || t === "uebersicht" || t === "overview")
+      return el;
+  }
+
   return null;
+}
+
+export function navigateToOverview(toc: HTMLElement): boolean {
+  const originalOverview = findOverviewControl(toc);
+  if (originalOverview) {
+    try {
+      originalOverview.click();
+      return true;
+    } catch (e) {}
+  }
+
+  const candidates: Window[] = [];
+  const ownerWindow = toc.ownerDocument
+    ? toc.ownerDocument.defaultView
+    : null;
+
+  [ROOT, ownerWindow, window].forEach((candidate) => {
+    if (candidate && !candidates.includes(candidate)) candidates.push(candidate);
+  });
+
+  for (const candidate of candidates) {
+    try {
+      const currentHref = candidate.location.href;
+      const target = new URL(currentHref);
+      if (target.protocol !== "http:" && target.protocol !== "https:") continue;
+
+      const path = (target.pathname || "").replace(/\/+$/, "/");
+      const isCourseApp = /\/(?:course|nightly)\/$/.test(path);
+      if (!isCourseApp) continue;
+
+      target.search = "";
+      target.hash = "";
+      if (target.href === currentHref) continue;
+
+      candidate.location.assign(target.href);
+      return true;
+    } catch (e) {}
+  }
+
+  return false;
 }
 
 function directChildOfTOC(

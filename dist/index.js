@@ -23,10 +23,11 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
   height:100% !important;
 }
 .lia-toc.lia-bm-toc5-active #lia-bm-toc5{
-  overflow: auto !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
 }
 .lia-toc.lia-bm-toc5-active .lia-bm-overview-pin{
-  margin-top: auto !important;
+  display:none !important;
 }
 
 /* ===== Bookmarks TOC ===== */
@@ -37,9 +38,13 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
   padding:0 .5em;
   flex:1 1 auto;
   min-height:0;
+  overflow:auto;
 }
 
 .lia-toc #lia-bm-toc5 .bm-footer{
+  display:flex;
+  flex-direction:column;
+  flex:0 0 auto;
   margin-top:auto;
   z-index: 1;
   padding: .55em .5em .6em;
@@ -125,6 +130,56 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
     0 0 0 1px rgba(var(--color-highlight), .18),
     0 0 0 3px rgba(var(--color-highlight), .12);
   background: rgba(0,0,0,.24);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35em;
+  width:calc(100% - 1em);
+  align-self:center;
+  box-sizing:border-box;
+  margin-top:.4em;
+  padding:.3em .5em;
+  border-radius:.55em;
+  border:1px solid rgba(var(--color-highlight), .75);
+  color:inherit;
+  background:rgba(var(--color-highlight), .3);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 .4em rgba(var(--color-highlight), .14);
+  font:inherit;
+  font-size:.88em;
+  cursor:pointer;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:hover{
+  border-color:rgba(var(--color-highlight), .95);
+  background:rgba(var(--color-highlight), .42);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:active{
+  background:rgba(var(--color-highlight), .5);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:focus-visible{
+  outline:2px solid rgb(var(--color-highlight));
+  outline-offset:2px;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-icon{
+  width:1.15em;
+  height:1.15em;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-icon svg{
+  width:100%;
+  height:100%;
 }
 
 .lia-toc #lia-bm-toc5 .bm-row{
@@ -229,7 +284,11 @@ const $f428b9566db24984$export$9bd51c34db924002 = `
 function $f428b9566db24984$export$b9324dd3ed41badd(doc) {
     if (!doc) return;
     try {
-        if (doc.getElementById($f428b9566db24984$export$13bec68de17cb8b1)) return;
+        const existing = doc.getElementById($f428b9566db24984$export$13bec68de17cb8b1);
+        if (existing) {
+            if (existing.textContent !== $f428b9566db24984$export$9bd51c34db924002) existing.textContent = $f428b9566db24984$export$9bd51c34db924002;
+            return;
+        }
         const st = doc.createElement("style");
         st.id = $f428b9566db24984$export$13bec68de17cb8b1;
         st.type = "text/css";
@@ -355,18 +414,52 @@ function $4f0046e728a1a92c$export$96272e1284a3c47f(toc) {
 }
 function $4f0046e728a1a92c$export$99405462185ad892(toc) {
     if (!toc) return null;
+    const homeButton = toc.querySelector("#lia-btn-home");
+    if (homeButton && !homeButton.closest("#lia-bm-toc5")) return homeButton;
     const cand = Array.from(toc.querySelectorAll("a,button")).filter((el)=>!el.closest("#lia-bm-toc5"));
-    for (const el of cand){
-        const t = (el.textContent || "").trim().toLowerCase();
-        if (t === "\xfcbersicht" || t === "uebersicht" || t === "overview") return el;
-    }
     for (const el of cand){
         if (!el.getAttribute) continue;
         const href = (el.getAttribute("href") || "").trim();
         if (!href) continue;
         if (href === "/nightly/" || href === "/course/" || href.endsWith("/nightly/") || href.endsWith("/course/")) return el;
     }
+    for (const el of cand){
+        const href = (el.getAttribute("href") || "").trim();
+        if (el.tagName === "A" && href.includes("#")) continue;
+        const t = (el.textContent || "").trim().toLowerCase();
+        if (t === "\xfcbersicht" || t === "uebersicht" || t === "overview") return el;
+    }
     return null;
+}
+function $4f0046e728a1a92c$export$9503a9a6173c02ab(toc) {
+    const originalOverview = $4f0046e728a1a92c$export$99405462185ad892(toc);
+    if (originalOverview) try {
+        originalOverview.click();
+        return true;
+    } catch (e) {}
+    const candidates = [];
+    const ownerWindow = toc.ownerDocument ? toc.ownerDocument.defaultView : null;
+    [
+        (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4),
+        ownerWindow,
+        window
+    ].forEach((candidate)=>{
+        if (candidate && !candidates.includes(candidate)) candidates.push(candidate);
+    });
+    for (const candidate of candidates)try {
+        const currentHref = candidate.location.href;
+        const target = new URL(currentHref);
+        if (target.protocol !== "http:" && target.protocol !== "https:") continue;
+        const path = (target.pathname || "").replace(/\/+$/, "/");
+        const isCourseApp = /\/(?:course|nightly)\/$/.test(path);
+        if (!isCourseApp) continue;
+        target.search = "";
+        target.hash = "";
+        if (target.href === currentHref) continue;
+        candidate.location.assign(target.href);
+        return true;
+    } catch (e) {}
+    return false;
 }
 function $4f0046e728a1a92c$var$directChildOfTOC(el, toc) {
     if (!el || !toc) return null;
@@ -575,7 +668,7 @@ function $6282e142bf746237$var$applySearchFilter(list, query) {
     });
     return anyVisible;
 }
-function $6282e142bf746237$export$3dafe445bd076f2a(doc, box, state) {
+function $6282e142bf746237$export$4704e56753c56edf(doc, toc, box, state) {
     const list = box.querySelector(".bm-list");
     if (!list) return;
     const footer = doc.createElement("div");
@@ -624,6 +717,34 @@ function $6282e142bf746237$export$3dafe445bd076f2a(doc, box, state) {
     shell.appendChild(input);
     shell.appendChild(clear);
     footer.appendChild(shell);
+    const originalOverview = (0, $4f0046e728a1a92c$export$99405462185ad892)(toc);
+    const overview = doc.createElement("button");
+    overview.type = "button";
+    overview.className = "bm-overview-button";
+    if (originalOverview) overview.classList.add("bm-overview");
+    const label = "Zur Kurs\u00fcbersicht";
+    overview.setAttribute("aria-label", label);
+    overview.title = label;
+    const overviewIcon = doc.createElement("span");
+    overviewIcon.className = "bm-overview-icon";
+    overviewIcon.setAttribute("aria-hidden", "true");
+    overviewIcon.innerHTML = `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" fill="currentColor"></path>
+    </svg>
+  `.trim();
+    const overviewText = doc.createElement("span");
+    overviewText.className = "bm-overview-text";
+    overviewText.textContent = label;
+    overview.addEventListener("click", (ev)=>{
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+        (0, $4f0046e728a1a92c$export$9503a9a6173c02ab)(toc);
+    }, true);
+    overview.appendChild(overviewIcon);
+    overview.appendChild(overviewText);
+    footer.appendChild(overview);
     box.appendChild(footer);
     updateClear();
 }
@@ -819,7 +940,7 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
         const box = TOC_DOC.createElement("div");
         box.id = "lia-bm-toc5";
         box.appendChild((0, $6282e142bf746237$export$3fb6f1d56c512c02)(TOC_DOC, toc, tree, state, activeHash, forceOpen, $3c9e6b683d5c4a4a$export$93c9ca42d9025d6f));
-        (0, $6282e142bf746237$export$3dafe445bd076f2a)(TOC_DOC, box, state);
+        (0, $6282e142bf746237$export$4704e56753c56edf)(TOC_DOC, toc, box, state);
         if (toolbar && toolbar.parentElement === toc) toolbar.insertAdjacentElement("afterend", box);
         else toc.insertBefore(box, toc.firstChild);
         toc.classList.add("lia-bm-toc5-active");
@@ -858,7 +979,7 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
     // =========================================================
     // Run-once Registry (import-safe)
     // =========================================================
-    const REGKEY = "__LIA_BM_TOC5_V59__";
+    const REGKEY = "__LIA_BM_TOC5_V63__";
     if ((0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY] && (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].installed) {
         try {
             (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].kick && (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].kick();
@@ -889,6 +1010,11 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
         else {
             const toolbar = toc.querySelector(".lia-toolbar");
             const overviewBtn = (0, $4f0046e728a1a92c$export$99405462185ad892)(toc);
+            const customOverviewBtn = box.querySelector(".bm-overview-button");
+            if (!customOverviewBtn) {
+                (0, $3c9e6b683d5c4a4a$export$7ff6d543f13c7390)();
+                return;
+            }
             const overviewChild = (0, $4f0046e728a1a92c$export$b739510726b33d9b)(toc, overviewBtn);
             (0, $4f0046e728a1a92c$export$bd404365fad2e626)(toc, toolbar, box, overviewChild);
             toc.classList.add("lia-bm-toc5-active");

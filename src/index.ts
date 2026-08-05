@@ -27,7 +27,7 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
   // =========================================================
   // Run-once Registry (import-safe)
   // =========================================================
-  const REGKEY = "__LIA_BM_TOC5_V59__";
+  const REGKEY = "__LIA_BM_TOC5_V63__";
   if ((ROOT as any)[REGKEY] && (ROOT as any)[REGKEY].installed) {
     try {
       (ROOT as any)[REGKEY].kick && (ROOT as any)[REGKEY].kick();
@@ -64,6 +64,12 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
     } else {
       const toolbar = toc.querySelector<HTMLElement>(".lia-toolbar");
       const overviewBtn = findOverviewControl(toc);
+      const customOverviewBtn = box.querySelector(".bm-overview-button");
+      if (!customOverviewBtn) {
+        enhance();
+        return;
+      }
+
       const overviewChild = pinOverviewBottom(toc, overviewBtn);
       hideOriginalNavigation(toc, toolbar, box as HTMLElement, overviewChild);
       toc.classList.add("lia-bm-toc5-active");

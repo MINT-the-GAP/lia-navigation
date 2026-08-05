@@ -15,10 +15,11 @@ export const CSS_TEXT = `
   height:100% !important;
 }
 .lia-toc.lia-bm-toc5-active #lia-bm-toc5{
-  overflow: auto !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
 }
 .lia-toc.lia-bm-toc5-active .lia-bm-overview-pin{
-  margin-top: auto !important;
+  display:none !important;
 }
 
 /* ===== Bookmarks TOC ===== */
@@ -29,9 +30,13 @@ export const CSS_TEXT = `
   padding:0 .5em;
   flex:1 1 auto;
   min-height:0;
+  overflow:auto;
 }
 
 .lia-toc #lia-bm-toc5 .bm-footer{
+  display:flex;
+  flex-direction:column;
+  flex:0 0 auto;
   margin-top:auto;
   z-index: 1;
   padding: .55em .5em .6em;
@@ -117,6 +122,56 @@ export const CSS_TEXT = `
     0 0 0 1px rgba(var(--color-highlight), .18),
     0 0 0 3px rgba(var(--color-highlight), .12);
   background: rgba(0,0,0,.24);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35em;
+  width:calc(100% - 1em);
+  align-self:center;
+  box-sizing:border-box;
+  margin-top:.4em;
+  padding:.3em .5em;
+  border-radius:.55em;
+  border:1px solid rgba(var(--color-highlight), .75);
+  color:inherit;
+  background:rgba(var(--color-highlight), .3);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 .4em rgba(var(--color-highlight), .14);
+  font:inherit;
+  font-size:.88em;
+  cursor:pointer;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:hover{
+  border-color:rgba(var(--color-highlight), .95);
+  background:rgba(var(--color-highlight), .42);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:active{
+  background:rgba(var(--color-highlight), .5);
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-button:focus-visible{
+  outline:2px solid rgb(var(--color-highlight));
+  outline-offset:2px;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-icon{
+  width:1.15em;
+  height:1.15em;
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.lia-toc #lia-bm-toc5 .bm-overview-icon svg{
+  width:100%;
+  height:100%;
 }
 
 .lia-toc #lia-bm-toc5 .bm-row{
@@ -222,7 +277,12 @@ export const CSS_TEXT = `
 export function ensureStyle(doc: Document | null): void {
   if (!doc) return;
   try {
-    if (doc.getElementById(STYLE_ID)) return;
+    const existing = doc.getElementById(STYLE_ID);
+    if (existing) {
+      if (existing.textContent !== CSS_TEXT) existing.textContent = CSS_TEXT;
+      return;
+    }
+
     const st = doc.createElement("style");
     st.id = STYLE_ID;
     st.type = "text/css";

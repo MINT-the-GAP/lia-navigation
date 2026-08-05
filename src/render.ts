@@ -1,6 +1,11 @@
 import { TreeNode } from "./tree";
 import { saveState } from "./storage";
-import { findOriginalLinkByHash, clickOriginalByHash } from "./toc";
+import {
+  findOriginalLinkByHash,
+  clickOriginalByHash,
+  findOverviewControl,
+  navigateToOverview,
+} from "./toc";
 
 import { ROOT } from "./context";
 
@@ -79,8 +84,9 @@ function applySearchFilter(list: HTMLUListElement, query: string): boolean {
   return anyVisible;
 }
 
-export function attachFooterSearch(
+export function attachFooter(
   doc: Document,
+  toc: HTMLElement,
   box: HTMLElement,
   state: Record<string, number>
 ): void {
@@ -141,6 +147,45 @@ export function attachFooterSearch(
   shell.appendChild(input);
   shell.appendChild(clear);
   footer.appendChild(shell);
+
+  const originalOverview = findOverviewControl(toc);
+  const overview = doc.createElement("button");
+  overview.type = "button";
+  overview.className = "bm-overview-button";
+  if (originalOverview) overview.classList.add("bm-overview");
+
+  const label = "Zur Kurs\u00fcbersicht";
+  overview.setAttribute("aria-label", label);
+  overview.title = label;
+
+  const overviewIcon = doc.createElement("span");
+  overviewIcon.className = "bm-overview-icon";
+  overviewIcon.setAttribute("aria-hidden", "true");
+  overviewIcon.innerHTML = `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z" fill="currentColor"></path>
+    </svg>
+  `.trim();
+
+  const overviewText = doc.createElement("span");
+  overviewText.className = "bm-overview-text";
+  overviewText.textContent = label;
+
+  overview.addEventListener(
+    "click",
+    (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+      navigateToOverview(toc);
+    },
+    true
+  );
+
+  overview.appendChild(overviewIcon);
+  overview.appendChild(overviewText);
+  footer.appendChild(overview);
+
   box.appendChild(footer);
   updateClear();
 }

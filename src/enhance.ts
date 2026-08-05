@@ -20,7 +20,7 @@ import {
   buildTree,
   collectForceOpen,
 } from "./tree";
-import { renderTree, attachFooterSearch } from "./render";
+import { renderTree, attachFooter } from "./render";
 
 import { ROOT_DOC } from "./context";
 
@@ -154,7 +154,7 @@ export function enhance(): boolean {
     const box = TOC_DOC.createElement("div");
     box.id = "lia-bm-toc5";
     box.appendChild(renderTree(TOC_DOC, toc, tree, state, activeHash, forceOpen, syncActive));
-    attachFooterSearch(TOC_DOC, box, state);
+    attachFooter(TOC_DOC, toc, box, state);
 
     if (toolbar && toolbar.parentElement === toc)
       toolbar.insertAdjacentElement("afterend", box);
