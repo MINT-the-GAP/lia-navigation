@@ -76,13 +76,17 @@ export function clickOriginalByHash(toc: HTMLElement, hash: string): boolean {
   try {
     a.click();
     return true;
-  } catch (e) {}
+  } catch (e) {
+    // Fall through to the synthetic event below.
+  }
   try {
     a.dispatchEvent(
       new MouseEvent("click", { bubbles: true, cancelable: true, view: ROOT })
     );
     return true;
-  } catch (e) {}
+  } catch (e) {
+    // Both paths failed; the caller falls back to setting location.hash.
+  }
   return false;
 }
 

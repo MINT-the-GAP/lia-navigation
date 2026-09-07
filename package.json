@@ -1,6 +1,6 @@
 {
   "name": "lia-navigation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Enhanced collapsible navigation with bookmarks and hierarchical TOC for LiaScript",
   "main": "dist/index.js",
   "scripts": {

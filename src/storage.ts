@@ -22,5 +22,8 @@ export function loadState(): Record<string, number> {
 export function saveState(s: Record<string, number>): void {
   try {
     ROOT.localStorage.setItem(storageKey(), JSON.stringify(s || {}));
-  } catch (e) {}
+  } catch (e) {
+    // Quota exceeded or storage blocked (private mode / third-party iframe):
+    // collapse state is a convenience, so losing it must not break navigation.
+  }
 }

@@ -2,6 +2,12 @@ import { initContext, ROOT } from "./context";
 import { enhance, cleanup, syncActive } from "./enhance";
 import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOverviewBottom, hideOriginalNavigation } from "./toc";
 
+interface Registry {
+  installed?: boolean;
+  kick?: () => void;
+  stop?: () => void;
+}
+
 (function () {
   // =========================================================
   // Root/Doc (iframe-safe)
@@ -10,7 +16,9 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
     let w: Window = window;
     try {
       while (w.parent && w.parent !== w) w = w.parent;
-    } catch (e) {}
+    } catch (e) {
+      // Cross-origin parent: stop walking up and use the last window we could read.
+    }
     return w;
   }
 
@@ -28,18 +36,27 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
   // Run-once Registry (import-safe)
   // =========================================================
   const REGKEY = "__LIA_BM_TOC5_V63__";
-  if ((ROOT as any)[REGKEY] && (ROOT as any)[REGKEY].installed) {
+  const host = ROOT as Window & Record<string, Registry | undefined>;
+
+  const existing = host[REGKEY];
+  if (existing && existing.installed) {
     try {
-      (ROOT as any)[REGKEY].kick && (ROOT as any)[REGKEY].kick();
-    } catch (e) {}
+      existing.kick && existing.kick();
+    } catch (e) {
+      // A stale registry from an earlier evaluation may hold a dead kick(); ignore it.
+    }
     return;
   }
-  (ROOT as any)[REGKEY] = (ROOT as any)[REGKEY] || {};
-  (ROOT as any)[REGKEY].installed = true;
+
+  const registry: Registry = host[REGKEY] || {};
+  host[REGKEY] = registry;
+  registry.installed = true;
 
   // =========================================================
   // Boot
   // =========================================================
+  const teardown = new AbortController();
+
   let tries = 0;
   const bootTimer = ROOT.setInterval(() => {
     tries++;
@@ -47,7 +64,7 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
     if (ok || tries > 160) ROOT.clearInterval(bootTimer);
   }, 150);
 
-  ROOT.setInterval(() => {
+  const watchTimer = ROOT.setInterval(() => {
     const toc = findTOC();
     if (!toc) return;
 
@@ -84,16 +101,28 @@ import { findTOC, isOverviewRoot, killSearchAnywhere, findOverviewControl, pinOv
         const toc = findTOC();
         if (toc) syncActive(toc);
       },
-      true
+      { capture: true, signal: teardown.signal }
     );
-  } catch (e) {}
+  } catch (e) {
+    // Older hosts may reject the options object; the plugin still works via the polling watchdog.
+  }
 
   // Expose for kick
-  (ROOT as any)[REGKEY].kick = function () {
+  registry.kick = function () {
     try {
       const toc = findTOC();
       if (toc && !isOverviewRoot()) enhance();
       if (toc && isOverviewRoot()) cleanup(toc);
-    } catch (e) {}
+    } catch (e) {
+      // The TOC may be mid-rerender; the watchdog retries on the next tick.
+    }
+  };
+
+  // Release every timer and listener this instance owns.
+  registry.stop = function () {
+    ROOT.clearInterval(bootTimer);
+    ROOT.clearInterval(watchTimer);
+    teardown.abort();
+    registry.installed = false;
   };
 })();

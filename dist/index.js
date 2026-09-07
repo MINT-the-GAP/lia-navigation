@@ -319,7 +319,10 @@ function $34de0361b1c4c74d$export$ea32cbdd559da174() {
 function $34de0361b1c4c74d$export$fb931cd598921492(s) {
     try {
         (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).localStorage.setItem($34de0361b1c4c74d$export$7367158f2f597ab1(), JSON.stringify(s || {}));
-    } catch (e) {}
+    } catch (e) {
+    // Quota exceeded or storage blocked (private mode / third-party iframe):
+    // collapse state is a convenience, so losing it must not break navigation.
+    }
 }
 
 
@@ -374,7 +377,9 @@ function $4f0046e728a1a92c$export$f6e7aeaeea1ff0ef(toc, hash) {
     try {
         a.click();
         return true;
-    } catch (e) {}
+    } catch (e) {
+    // Fall through to the synthetic event below.
+    }
     try {
         a.dispatchEvent(new MouseEvent("click", {
             bubbles: true,
@@ -382,7 +387,9 @@ function $4f0046e728a1a92c$export$f6e7aeaeea1ff0ef(toc, hash) {
             view: (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)
         }));
         return true;
-    } catch (e) {}
+    } catch (e) {
+    // Both paths failed; the caller falls back to setting location.hash.
+    }
     return false;
 }
 function $4f0046e728a1a92c$var$looksLikeSearchInput(inp) {
@@ -824,15 +831,21 @@ function $6282e142bf746237$export$3fb6f1d56c512c02(doc, toc, nodes, state, activ
             if (!ok) {
                 try {
                     (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).location.hash = "#" + n.hash;
-                } catch (e2) {}
+                } catch (e2) {
+                // Cross-origin root window: fall back to the local frame below.
+                }
                 try {
                     window.location.hash = "#" + n.hash;
-                } catch (e3) {}
+                } catch (e3) {
+                // Nothing left to try; the link stays inert rather than throwing.
+                }
             }
             (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).setTimeout(()=>{
                 try {
                     syncActive(toc);
-                } catch (e) {}
+                } catch (e) {
+                // The TOC may have been re-rendered out from under us; the watchdog resyncs.
+                }
             }, 80);
         }, true);
         row.appendChild(a);
@@ -964,7 +977,9 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
         let w = window;
         try {
             while(w.parent && w.parent !== w)w = w.parent;
-        } catch (e) {}
+        } catch (e) {
+        // Cross-origin parent: stop walking up and use the last window we could read.
+        }
         return w;
     }
     let root = getRootWindowSafe();
@@ -980,24 +995,30 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
     // Run-once Registry (import-safe)
     // =========================================================
     const REGKEY = "__LIA_BM_TOC5_V63__";
-    if ((0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY] && (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].installed) {
+    const host = (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4);
+    const existing = host[REGKEY];
+    if (existing && existing.installed) {
         try {
-            (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].kick && (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].kick();
-        } catch (e) {}
+            existing.kick && existing.kick();
+        } catch (e) {
+        // A stale registry from an earlier evaluation may hold a dead kick(); ignore it.
+        }
         return;
     }
-    (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY] = (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY] || {};
-    (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].installed = true;
+    const registry = host[REGKEY] || {};
+    host[REGKEY] = registry;
+    registry.installed = true;
     // =========================================================
     // Boot
     // =========================================================
+    const teardown = new AbortController();
     let tries = 0;
     const bootTimer = (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).setInterval(()=>{
         tries++;
         const ok = (0, $3c9e6b683d5c4a4a$export$7ff6d543f13c7390)();
         if (ok || tries > 160) (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).clearInterval(bootTimer);
     }, 150);
-    (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).setInterval(()=>{
+    const watchTimer = (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).setInterval(()=>{
         const toc = (0, $4f0046e728a1a92c$export$e8db3e6bc578b931)();
         if (!toc) return;
         if ((0, $4f0046e728a1a92c$export$f5c1f1e7b385e9e0)()) {
@@ -1025,15 +1046,29 @@ function $3c9e6b683d5c4a4a$export$7ff6d543f13c7390() {
         (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).addEventListener("hashchange", ()=>{
             const toc = (0, $4f0046e728a1a92c$export$e8db3e6bc578b931)();
             if (toc) (0, $3c9e6b683d5c4a4a$export$93c9ca42d9025d6f)(toc);
-        }, true);
-    } catch (e) {}
+        }, {
+            capture: true,
+            signal: teardown.signal
+        });
+    } catch (e) {
+    // Older hosts may reject the options object; the plugin still works via the polling watchdog.
+    }
     // Expose for kick
-    (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4)[REGKEY].kick = function() {
+    registry.kick = function() {
         try {
             const toc = (0, $4f0046e728a1a92c$export$e8db3e6bc578b931)();
             if (toc && !(0, $4f0046e728a1a92c$export$f5c1f1e7b385e9e0)()) (0, $3c9e6b683d5c4a4a$export$7ff6d543f13c7390)();
             if (toc && (0, $4f0046e728a1a92c$export$f5c1f1e7b385e9e0)()) (0, $3c9e6b683d5c4a4a$export$de863c629cb9919d)(toc);
-        } catch (e) {}
+        } catch (e) {
+        // The TOC may be mid-rerender; the watchdog retries on the next tick.
+        }
+    };
+    // Release every timer and listener this instance owns.
+    registry.stop = function() {
+        (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).clearInterval(bootTimer);
+        (0, $53e78f2af9ed7736$export$fbea82a1c0574ef4).clearInterval(watchTimer);
+        teardown.abort();
+        registry.installed = false;
     };
 })();
 

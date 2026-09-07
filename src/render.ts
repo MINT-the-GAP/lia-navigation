@@ -312,16 +312,22 @@ export function renderTree(
         if (!ok) {
           try {
             ROOT.location.hash = "#" + n.hash;
-          } catch (e2) {}
+          } catch (e2) {
+            // Cross-origin root window: fall back to the local frame below.
+          }
           try {
             window.location.hash = "#" + n.hash;
-          } catch (e3) {}
+          } catch (e3) {
+            // Nothing left to try; the link stays inert rather than throwing.
+          }
         }
 
         ROOT.setTimeout(() => {
           try {
             syncActive(toc);
-          } catch (e) {}
+          } catch (e) {
+            // The TOC may have been re-rendered out from under us; the watchdog resyncs.
+          }
         }, 80);
       },
       true
