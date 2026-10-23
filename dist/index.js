@@ -527,6 +527,9 @@ function $4f0046e728a1a92c$export$bd404365fad2e626(toc, toolbar, box, keepEl) {
 function $a016e3f2b62aeabf$export$b779dbab437835ad(a, toc) {
     const aria = a.getAttribute("aria-level");
     if (aria && !isNaN(parseInt(aria, 10))) return parseInt(aria, 10);
+    // LiaScript (old flat list and new nested tree) marks the level on the link itself.
+    const cls = /lia-toc__link--is-lvl-(\d+)/.exec(a.className);
+    if (cls) return parseInt(cls[1], 10);
     const li = a.closest("li");
     if (li) {
         let depth = 1;

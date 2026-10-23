@@ -11,6 +11,10 @@ export function getLevelFromDOM(a: HTMLElement, toc: HTMLElement): number {
   const aria = a.getAttribute("aria-level");
   if (aria && !isNaN(parseInt(aria, 10))) return parseInt(aria, 10);
 
+  // LiaScript (old flat list and new nested tree) marks the level on the link itself.
+  const cls = /lia-toc__link--is-lvl-(\d+)/.exec(a.className);
+  if (cls) return parseInt(cls[1], 10);
+
   const li = a.closest("li");
   if (li) {
     let depth = 1;
