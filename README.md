@@ -28,7 +28,7 @@ https://github.com/MINT-the-GAP/lia-navigation
 
    or pin to a specific version:
 
-   `import: https://raw.githubusercontent.com/MINT-the-GAP/lia-navigation/0.0.1/README.md`
+   `import: https://raw.githubusercontent.com/MINT-the-GAP/lia-navigation/0.0.2/README.md`
 
 2. Copy the implementation block below directly into your course header
 
@@ -40,5 +40,5 @@ https://github.com/MINT-the-GAP/lia-navigation
 If you prefer not to use `import:`, copy the following block directly into the header of your LiaScript document.
 
 ``` markdown
-script:   https://cdn.jsdelivr.net/gh/MINT-the-GAP/lia-navigation@0.0.1/dist/index.js
+script:   https://cdn.jsdelivr.net/gh/MINT-the-GAP/lia-navigation@0.0.2/dist/index.js
 ```
